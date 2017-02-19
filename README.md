@@ -8,6 +8,81 @@
 [![semantic-release][semantic-image] ][semantic-url]
 [![js-standard-style][standard-image]][standard-url]
 
+## Overview
+
+[Realm](https://realm.io/docs/get-started/) is a platform for building offline-first, reactive mobile experiences.
+
+### The problem
+
+When building schemas for Realm you'll quickly find that there are two strange parts.
+
+1. You often [repeat the name of the class](https://realm.io/docs/javascript/latest/#models) that you're decorating with the schema.
+2. When making relationships in Realm's schema, you use a string to reference another model.
+
+There is (I think) a reason for this. Your class name and the name of the model might be different
+so effectively requiring a name property on a schema makes it possible to alias a class.
+
+The problem with using a string is that at least in JavaScript it is hard for tooling to help you. If, instead we use an actual variable to reference to other class in the relationship, then we get all of the tooling help that we want.
+
+### Solution
+
+We can pull a name off of a class dynamically then use that to pre-populate the schema field's name property. This helps us for both problems 1 & 2 above. Take a look at the example below to see how we can use `react-util`'s `withSchema` and `named` functions to decorator the class.
+
+## Getting Started
+
+### Installation
+
+```
+npm install --save realm-util
+```
+
+### Usage
+
+Decorate your classes using `withSchema` and link complex relationships with `named`.
+
+```js
+const ru = require('realm-util');
+
+class Recording { }
+const DecoratedRecording = ru.withSchema(Recording, {
+  properties: {
+    label: { type: 'string' },
+    duration: { type: 'int' }
+  }
+});
+
+console.log(DecoratedRecording.schema);
+/*
+  {
+    name: 'Recording',
+    properties: {
+      label: { type: 'string' },
+      duration: { type: 'int' }
+    }
+  }
+ */
+
+class RecordingSet {}
+DecoratedRecordingSet = ru.withSchema(RecordingSet, {
+  properties: {
+    name: { type: 'string' },
+    recordings: { type: 'list', objectType: ru.named(Recording) }
+  }
+});
+
+console.log(DecoratedRecordingSet.schema);
+/*
+  {
+    name: 'RecordingSet',
+    properties: {
+      name: { type: 'string' },
+      recordings: { type: 'list', objectType: 'Recording' }
+    }
+  }
+ */
+
+```
+
 ### Small print
 
 Author: Jim Cummins &lt;jimthedev@gmail.com&gt; &copy; 2017
