@@ -26,6 +26,12 @@ function withSchema (classToDecorate, schema) {
   return classToDecorate
 }
 
-const realmUtil = { named, withSchema }
+function realmSchema (schema) {
+  return function (target) {
+    return withSchema(target, schema)
+  }
+}
+
+const realmUtil = { named, withSchema, realmSchema }
 
 module.exports = realmUtil

@@ -36,7 +36,7 @@ We can pull a name off of a class dynamically then use that to pre-populate the 
 npm install --save realm-util
 ```
 
-### Usage
+### Usage (ES5)
 
 Decorate your classes using `withSchema` and link complex relationships with `named`.
 
@@ -81,6 +81,45 @@ console.log(DecoratedRecordingSet.schema);
   }
  */
 
+```
+
+### Usage (babel-decorators-legacy)
+
+Install babel-plugin-transform-decorators-legacy
+
+```
+npm install --save-dev babel-plugin-transform-decorators-legacy
+```
+
+Use the realmSchema decorator
+
+
+```js
+const ru = require('realm-util');
+const realmSchema = ru.realmSchema;
+
+@realmSchema({
+  properties: {
+    name: { type: 'string' },
+    age: { type: 'int' }
+  }
+})
+class Artist {
+  hello() {
+    console.log('hi');
+  }
+}
+
+console.log(Artist.schema);
+/*
+  {
+    name: 'Artist',
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'int' }
+    }
+  }
+ */
 ```
 
 ### Small print
